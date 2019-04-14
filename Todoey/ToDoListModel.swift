@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Item: Encodable {
+class Item: Encodable, Decodable { //these 2 protocols were kept for interpretation but can be replaced with codable
     var job: String = ""
     var complete: Bool = false
 }

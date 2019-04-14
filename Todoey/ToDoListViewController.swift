@@ -13,7 +13,9 @@ class ToDoListViewController: UITableViewController {
   //  var itemArray = ["Find Mike", "Buy Eggos", "Kill Monster"]
     var itemArray = [Item]()
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-
+    
+    
+    
    //var defaults: UserDefaults = UserDefaults.standard
  
     override func viewDidLoad() {
@@ -23,14 +25,9 @@ class ToDoListViewController: UITableViewController {
          //urls is an array and we want the first item in that array
         
         print(dataFilePath!)
-        
-        let newItem: Item = Item()
-        newItem.job = "Find Mike"
-        itemArray.append(newItem)
-        
-        saveItems()
        
-        
+        //loads items from the plist file
+        loadItems()
         
 
     }
@@ -103,8 +100,12 @@ class ToDoListViewController: UITableViewController {
             
             //create a new item and add it to the array
             let newItem: Item = Item()//7
+            
             newItem.job = addedItem.text!//8
             self.itemArray.append(newItem)//9
+            
+            self.saveItems()
+            
             
             print("Success... UIAlert was pressed!")//10
             print(addedItem.text!)//11
@@ -130,7 +131,8 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    
+    //this function encodes the itemarray
+    //this will save the content of the itemarray into a plist file for data reuse
     func saveItems() {
         let encoder: PropertyListEncoder = PropertyListEncoder()
         
@@ -145,7 +147,23 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    
+    //takes the data which was encoded to the plist file and decodes it
+    //will load the data into an item array
+    //essentially allows the data to persist beyond the life time of the application even after termination of the app
+    //in other words, data which we change the values of will continue to exists because they are now in persistent storage
+    //in the case of this application, we store an array of custom objects into this persisted storage.
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+           
+            let decoder = PropertyListDecoder()
+            
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding itemArray...\(error)")
+            }
+        }
+    }
     
 }
 
